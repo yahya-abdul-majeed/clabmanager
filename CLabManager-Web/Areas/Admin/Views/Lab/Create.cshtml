@@ -1,0 +1,78 @@
+﻿<!-- Modal start-->
+<div class="modal fade" id="computerModal" tabindex="-1" role="dialog" aria-labelledby="computerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="titleModalLabel">Create a Computer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="@Url.Action("CreateComputer")" method="post">
+                    <div class="form-group">
+                        <label for="computerName">Computer Name</label>
+                        <input type="text" id="computerName" name="computerName" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="computerDesc">Computer Description</label>
+                        <textarea type="text" id="computerDesc" name="computerDesc" class="form-control"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Model end-->
+
+
+<div class="container">
+
+    <div class="row w-25">
+        <form>
+            <div class="form-group">
+                <label for="roomNo">Room No: </label>
+                <input type="number" class="form-control" id="roomNo" placeholder="Room No"/>
+            </div>
+            <div class="form-group">
+                <label for="buildingNo">Building No: </label>
+                <input type="number" class="form-control" id="buildingNo" placeholder="building No" />
+            </div>
+            <button type="submit" class="btn btn-success mt-2">Create Classroom</button>
+        </form>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-4 bg-danger" style="height: 500px">
+            <button class="btn btn-success mt-2" data-toggle="modal" data-target="#computerModal">Create Computer</button>
+            <div>
+
+            </div>
+        </div>
+        <div class="col-8 bg-info">
+            <button onclick="allotmentHandler()" class="btn btn-success mt-2">Create allotment space</button>
+            <div id="containerForcomputers" class="row justify-content-center">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        
+        function allotmentHandler(){
+            var container = document.getElementById('containerForcomputers');
+            var box = document.createElement('div');
+            box.style.height = '200px';
+            box.style.width = '200px';
+            box.style.background = 'grey';
+            box.style.border = "10px solid black"
+            box.classList.add("col-3");
+            box.style.margin = "5px";
+            container.appendChild(box);
+        }
+    </script>
+}
