@@ -3,6 +3,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -18,11 +19,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area=User}/{controller=Home}/{action=Index}/{id?}"
+    pattern: "{area=admin}/{controller=lab}/{action=create}/{id?}"
 );
 app.MapControllerRoute(
     name: "default",

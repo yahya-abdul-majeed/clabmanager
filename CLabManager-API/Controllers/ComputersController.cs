@@ -50,7 +50,7 @@ namespace CLabManager_API.Controllers
             {
                 return NotFound();
             }
-            var computers = await _db.Computers.Where(c => c.LabId == null).ToListAsync();
+            var computers = await _db.Computers.Where(c => c.IsPositioned == false).ToListAsync();
             var computerDTOs = _mapper.Map<List<ComputerDTO>>(computers);
             return computerDTOs ;
         }
