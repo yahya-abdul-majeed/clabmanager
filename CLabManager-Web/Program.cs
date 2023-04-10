@@ -1,3 +1,5 @@
+using Microsoft.Extensions.FileProviders;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,6 +17,21 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+//app.UseStaticFiles(new StaticFileOptions
+//{
+//    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "node_modules")),
+//    RequestPath = "/node_modules"
+//});
+
+//app.UseFileServer(new FileServerOptions()
+//{
+//    FileProvider = new PhysicalFileProvider(
+//        Path.Combine(Directory.GetCurrentDirectory(), @"node_modules")),
+//    RequestPath = new PathString("/node_modules"),
+//    EnableDirectoryBrowsing = true
+//});
+
 app.UseStaticFiles();
 
 app.UseRouting();

@@ -9,6 +9,7 @@ namespace ModelsLibrary.Models
         public int RoomNo { get; set; } 
         public int BuildingNo { get;set; }
         public LabStatus Status { get; set; }
+        public GridType GridType { get; set; }
         public ICollection<ComputerDTO> ComputerList { get; set; }
     }
 }

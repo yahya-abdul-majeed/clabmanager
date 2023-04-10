@@ -1,4 +1,7 @@
 ﻿@model ModelsLibrary.Models.ViewModels.CreateLabVM
+@{
+    var labModel = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Lab);
+}
 
 <!-- Modal start-->
 <div class="modal fade" id="computerModal" tabindex="-1" role="dialog" aria-labelledby="computerModalLabel" aria-hidden="true">
@@ -34,16 +37,22 @@
 <div class="container">
 
     <div class="row w-25">
-        <form>
+        <form asp-action="CreateLab" method="post">
             <div class="form-group">
                 <label for="roomNo">Room No: </label>
-                <input type="number" class="form-control" id="roomNo" placeholder="Room No"/>
+                <input type="number" class="form-control" name="RoomNo" id="roomNo" placeholder="Room No" />
             </div>
             <div class="form-group">
                 <label for="buildingNo">Building No: </label>
-                <input type="number" class="form-control" id="buildingNo" placeholder="building No" />
+                <input type="number" class="form-control" name="BuildingNo" id="buildingNo" placeholder="building No" />
             </div>
-            <button type="submit" class="btn btn-success mt-2">Create Classroom</button>
+            <div class="form-group">
+                <label for="gridType">Choose Grid Type:</label>
+               
+                <select class="form-select" name="gridType" asp-items="Model.items">
+                </select>
+            </div>
+            <button id="createLabButton" type="submit" class="btn btn-success mt-2">Create Lab</button>
         </form>
     </div>
 
@@ -75,5 +84,11 @@
 </div>
 
 @section Scripts{
-    <script src="~/js/CreatePage.js"></script>
+    <script>
+        var lab = @Html.Raw(labModel)
+    </script>
+    <script src="~/js/CreatePage.js">
+       
+    </script> 
+    
 }

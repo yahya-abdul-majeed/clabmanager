@@ -22,89 +22,6 @@ namespace CLabManager_API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CLabManager_API.Models.Computer", b =>
-                {
-                    b.Property<int>("ComputerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ComputerId"));
-
-                    b.Property<string>("ComputerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsPositioned")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("LabId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ComputerId");
-
-                    b.HasIndex("LabId");
-
-                    b.ToTable("Computers");
-                });
-
-            modelBuilder.Entity("CLabManager_API.Models.Issue", b =>
-                {
-                    b.Property<int>("IssueId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IssueId"));
-
-                    b.Property<int>("ComputerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Priority")
-                        .HasColumnType("int");
-
-                    b.Property<int>("State")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("IssueId");
-
-                    b.HasIndex("ComputerId");
-
-                    b.ToTable("Issues");
-                });
-
-            modelBuilder.Entity("CLabManager_API.Models.Lab", b =>
-                {
-                    b.Property<int>("LabId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LabId"));
-
-                    b.Property<int>("BuildingNo")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoomNo")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("LabId");
-
-                    b.ToTable("Labs");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -303,26 +220,131 @@ namespace CLabManager_API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CLabManager_API.Models.Computer", b =>
+            modelBuilder.Entity("ModelsLibrary.Models.Computer", b =>
                 {
-                    b.HasOne("CLabManager_API.Models.Lab", "Lab")
-                        .WithMany("ComputerList")
-                        .HasForeignKey("LabId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("ComputerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Navigation("Lab");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ComputerId"));
+
+                    b.Property<string>("ComputerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GridType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPositioned")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("LabId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PositionOnGrid")
+                        .HasColumnType("int");
+
+                    b.HasKey("ComputerId");
+
+                    b.HasIndex("LabId");
+
+                    b.ToTable("Computers");
                 });
 
-            modelBuilder.Entity("CLabManager_API.Models.Issue", b =>
+            modelBuilder.Entity("ModelsLibrary.Models.DTO.ComputerDTO", b =>
                 {
-                    b.HasOne("CLabManager_API.Models.Computer", "Computer")
-                        .WithMany()
-                        .HasForeignKey("ComputerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("ComputerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Navigation("Computer");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ComputerId"));
+
+                    b.Property<string>("ComputerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GridType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPositioned")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("LabId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PositionOnGrid")
+                        .HasColumnType("int");
+
+                    b.HasKey("ComputerId");
+
+                    b.HasIndex("LabId");
+
+                    b.ToTable("ComputerDTO");
+                });
+
+            modelBuilder.Entity("ModelsLibrary.Models.Issue", b =>
+                {
+                    b.Property<int>("IssueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IssueId"));
+
+                    b.Property<int>("ComputerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IssueId");
+
+                    b.HasIndex("ComputerId");
+
+                    b.ToTable("Issues");
+                });
+
+            modelBuilder.Entity("ModelsLibrary.Models.Lab", b =>
+                {
+                    b.Property<int>("LabId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LabId"));
+
+                    b.Property<int>("BuildingNo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GridType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoomNo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("LabId");
+
+                    b.ToTable("Labs");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -376,7 +398,34 @@ namespace CLabManager_API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CLabManager_API.Models.Lab", b =>
+            modelBuilder.Entity("ModelsLibrary.Models.Computer", b =>
+                {
+                    b.HasOne("ModelsLibrary.Models.Lab", "Lab")
+                        .WithMany()
+                        .HasForeignKey("LabId");
+
+                    b.Navigation("Lab");
+                });
+
+            modelBuilder.Entity("ModelsLibrary.Models.DTO.ComputerDTO", b =>
+                {
+                    b.HasOne("ModelsLibrary.Models.Lab", null)
+                        .WithMany("ComputerList")
+                        .HasForeignKey("LabId");
+                });
+
+            modelBuilder.Entity("ModelsLibrary.Models.Issue", b =>
+                {
+                    b.HasOne("ModelsLibrary.Models.Computer", "Computer")
+                        .WithMany()
+                        .HasForeignKey("ComputerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Computer");
+                });
+
+            modelBuilder.Entity("ModelsLibrary.Models.Lab", b =>
                 {
                     b.Navigation("ComputerList");
                 });

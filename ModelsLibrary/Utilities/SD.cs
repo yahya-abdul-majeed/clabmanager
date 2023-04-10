@@ -1,5 +1,11 @@
 ﻿namespace ModelsLibrary.Utilities
 {
+    public enum GridType
+    {
+        None = 0,
+        type1 = 1,
+        type2 = 2
+    }
     public enum LabStatus
     {
         Occupied,

@@ -81,5 +81,36 @@ namespace CLabManager_API.Controllers
 
             return CreatedAtAction("GetComputer", new {id = computer.ComputerId}, _mapper.Map<ComputerDTO>(computer));
         }
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ComputerDTO>> UpdateComputer(int id,ComputerDTO ComputerDTO)
+        {
+            if (id != ComputerDTO.ComputerId)
+                return BadRequest();
+            if (_db.Computers == null)
+                return NotFound();
+            Computer comp = _mapper.Map<Computer>(ComputerDTO);
+            _db.Update(comp);
+            await _db.SaveChangesAsync();
+
+            return CreatedAtAction("GetComputer", new { id = comp.ComputerId }, ComputerDTO);
+        }
+        [HttpPut]
+        [Route("ispositioned/{id}")]
+        public async Task<ActionResult<ComputerDTO>> UpdatePositionStatus(int id, PositionUpdateDTO dto)
+        {
+            if (_db.Computers == null)
+                return NotFound();
+            Computer comp = await _db.Computers.FindAsync(id);
+            if(comp == null)
+            {
+                return NotFound();
+            }
+            comp.IsPositioned = dto.IsPositioned;
+            comp.PositionOnGrid = dto.PositionOnGrid;
+            comp.LabId = dto.LabId;
+            _db.Update(comp);
+            await _db.SaveChangesAsync();
+            return CreatedAtAction("GetComputer", new { id = comp.ComputerId }, _mapper.Map<ComputerDTO>(comp));
+        }
     }
 }

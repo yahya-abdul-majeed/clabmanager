@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using ModelsLibrary.Utilities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ModelsLibrary.Models
 {
@@ -8,6 +9,8 @@ namespace ModelsLibrary.Models
         public string ComputerName { get;set;}
         public string Description { get;set; }
         public bool IsPositioned { get;set; }
+        public GridType GridType { get; set; } = GridType.None;
+        public int? PositionOnGrid { get; set; } = null;
         [ForeignKey("Lab")]
         public int? LabId { get;set; }
         public Lab? Lab { get; set; } //navigation property
