@@ -12,5 +12,6 @@ namespace ModelsLibrary.Models.ViewModels
         public Lab? Lab { get; set; } = null;
         public List<Computer> UnassignedComputers { get;set; }
         public List<SelectListItem> items { get; set; }
+        public List<SelectListItem> Labs { get; set; }
     }
 }

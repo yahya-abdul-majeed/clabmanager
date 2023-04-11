@@ -1,7 +1,7 @@
 ﻿var idCount = 0
 
 $(document).ready(function () {
-    if (lab.LabId) {
+    if (lab) {
         console.log("this is room no", lab.RoomNo)
         console.log("this is building no", lab.BuildingNo)
         console.log("this is grid type", lab.GridType)
@@ -11,8 +11,9 @@ $(document).ready(function () {
         } else if (lab.GridType === 2) {
             drawGridType2()
         }
+        assignComputersToGrid()
     }
-    console.log("this is lab" ,lab.LabId)
+    console.log("this is lab" ,lab?.LabId)
     
     $("#computerCreationSave").click(function () {
         let formData = JSON.stringify({
@@ -36,13 +37,24 @@ $(document).ready(function () {
                         computers.map(computer => {
                             console.log(computer)
                             var firstdiv = document.createElement('div')
+                            firstdiv.setAttribute('shouldDelete', true)
                             var seconddiv = document.createElement('div')
-                            firstdiv.classList.add("m-2", "row")
+                            var thirddiv = document.createElement('div')
+                            var p = document.createElement('p')
+                            var b = document.createElement('b')
+                            b.innerHTML = computer.computerName
+                            p.appendChild(b)
+                            thirddiv.appendChild(p)
+                            thirddiv.classList.add("col")
+                            firstdiv.classList.add("m-2", "row", "border", "bg-white")
                             seconddiv.classList.add("col")
                             firstdiv.appendChild(seconddiv)
+                            firstdiv.appendChild(thirddiv)
                             var myimg = document.createElement('img')
                             myimg.id = computer.computerId
+                            myimg.name = computer.computerName
                             console.log("image id", myimg.id)
+                            console.log("image name",myimg.name)
                             myimg.src = "/images/ComputerIcon.png"
                             myimg.alt = "computer"
                             myimg.style.width = "80px"
@@ -69,6 +81,53 @@ function dragStart_handler(event) {
     event.dataTransfer.setData("text/plain", event.target.id)
 }
 
+function drop_unassigned_handler(event) {
+    event.preventDefault()
+    const data = event.dataTransfer.getData("text/plain")
+    var div = document.getElementById("unassignedcomps")
+    var img = document.getElementById(data)
+    if (img.parentElement.parentElement.hasAttribute('shouldDelete')) {
+        img.parentElement.parentElement.remove()
+    }
+    var firstdiv = document.createElement('div')
+    var seconddiv = document.createElement('div')
+    var thirddiv = document.createElement('div')
+    var p = document.createElement('p')
+    var b = document.createElement('b')
+    b.innerHTML = img.name
+    console.log("this is img.name" ,img.name)
+    p.appendChild(b)
+    thirddiv.appendChild(p)
+    thirddiv.classList.add("col")
+    firstdiv.setAttribute('shouldDelete', true)
+    firstdiv.classList.add("m-2", "row","border", "bg-white")
+    seconddiv.classList.add("col")
+    seconddiv.appendChild(img)
+    firstdiv.appendChild(seconddiv)
+    firstdiv.appendChild(thirddiv)
+    div.appendChild(firstdiv)
+
+    var options = {
+        method: "PUT",
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+            positionOnGrid: null,
+            isPositioned: false,
+            labId: null
+        })
+    }
+    fetch(`https://localhost:7138/api/Computers/ispositioned/${img.id}`, options)
+        .then(() => console.log("fetch executed for drop"))
+    console.log("unassigned drop")
+}
+
+function drag_unassigned_handler(event) {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = "move"
+}
+
 
 function createSingleAllotment() {
     var box = document.createElement('div');
@@ -90,6 +149,9 @@ function createSingleAllotment() {
         if (!box.hasChildNodes()) {
             const data = event.dataTransfer.getData("text/plain");
             var img = document.getElementById(data)
+            if (img.parentElement.parentElement.hasAttribute('shouldDelete')) {
+                img.parentElement.parentElement.remove()
+            }
             box.appendChild(img)
             var options = {
                 method: "PUT",
@@ -109,6 +171,24 @@ function createSingleAllotment() {
         console.log(box)
     }
     return box;
+}
+
+function assignComputersToGrid() {
+    lab.ComputerList.map(computer => {
+        var myimg = document.createElement('img')
+        myimg.id = computer.ComputerId
+        myimg.name = computer.ComputerName
+        console.log('sexy id',myimg.id)
+        myimg.src = "/images/ComputerIcon.png"
+        myimg.alt = "computer"
+        myimg.style.width = "80px"
+        myimg.style.height = "80px"
+        myimg.draggable = true
+        myimg.ondragstart = dragStart_handler
+        console.log('#' + computer.PositionOnGrid)
+        //document.getElementById(computer.PositionOnGrid).appendChild(myimg)
+        document.querySelector(`#gridContainer #\\3${computer.PositionOnGrid} `).appendChild(myimg)
+    })
 }
 
 function drawGridType1() {
@@ -167,7 +247,6 @@ function drawGridType2() {
         container.appendChild(studentsRow)
     }
     createTeachersRow()
-    createStudentsRow()
     createStudentsRow()
     createStudentsRow()
     createStudentsRow()

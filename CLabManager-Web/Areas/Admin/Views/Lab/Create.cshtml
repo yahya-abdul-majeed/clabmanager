@@ -36,39 +36,57 @@
 
 <div class="container">
 
-    <div class="row w-25">
-        <form asp-action="CreateLab" method="post">
-            <div class="form-group">
-                <label for="roomNo">Room No: </label>
-                <input type="number" class="form-control" name="RoomNo" id="roomNo" placeholder="Room No" />
-            </div>
-            <div class="form-group">
-                <label for="buildingNo">Building No: </label>
-                <input type="number" class="form-control" name="BuildingNo" id="buildingNo" placeholder="building No" />
-            </div>
-            <div class="form-group">
-                <label for="gridType">Choose Grid Type:</label>
-               
-                <select class="form-select" name="gridType" asp-items="Model.items">
-                </select>
-            </div>
-            <button id="createLabButton" type="submit" class="btn btn-success mt-2">Create Lab</button>
-        </form>
+    <div class="row">
+       <div class="col">
+            <form asp-action="CreateLab" method="post">
+                <div class="form-group">
+                    <label for="roomNo">Room No: </label>
+                    <input type="number" min="1" class="form-control" name="RoomNo" id="roomNo" placeholder="Room No" />
+                </div>
+                <div class="form-group">
+                    <label for="buildingNo">Building No: </label>
+                    <input type="number" min="1" class="form-control" name="BuildingNo" id="buildingNo" placeholder="building No" />
+                </div>
+                <div class="form-group">
+                    <label for="gridType">Choose Grid Type:</label>
+
+                    <select class="form-select" name="gridType" asp-items="Model.items">
+                    </select>
+                </div>
+                <button id="createLabButton" type="submit" class="btn btn-success mt-2">Create Lab</button>
+            </form>
+       </div>
+       <div class="col"></div>
+
+       <div class="col">
+            <form asp-action="Create">
+               <div class="form-group">
+                   <label for="LabId">Choose a lab to edit</label>
+                    <select onchange="this.form.submit()" class="form-select" name="LabId" asp-items="Model.Labs">
+                        @if (Model.Lab != null)
+                        {
+                            <option value="@Model.Lab.LabId">Building @Model.Lab.BuildingNo.ToString() Room @Model.Lab.RoomNo.ToString()</option>
+                        }else{
+                            <option></option>
+                        }
+                    </select>
+               </div>
+           </form>
+       </div>
     </div>
 
     <div class="row mt-4">
         <div class="col-4 bg-danger" style="height: 500px">
             <button class="btn btn-success mt-2" data-toggle="modal" data-target="#computerModal">Create Computer</button>
-            <div id="unassignedcomps" class="mt-2" style="height: 430px;overflow-x: hidden;">
+            <div ondrop="drop_unassigned_handler(event)" ondragover="drag_unassigned_handler(event)" id="unassignedcomps" class="mt-2" style="height: 430px;overflow-x: hidden;">
                 @foreach(var comp in Model.UnassignedComputers)
                 {
-                    <div class="m-2 row">
+                    <div class="m-2 row border bg-white" shouldDelete="true">
                         <div class="col">
-                            <img id="@comp.ComputerId" draggable="true" ondragstart="dragStart_handler(event)" src="/images/ComputerIcon.png" alt="computer" style="width:80px;height:80px;" />
+                            <img name="@comp.ComputerName" id="@comp.ComputerId" draggable="true" ondragstart="dragStart_handler(event)" src="/images/ComputerIcon.png" alt="computer" style="width:80px;height:80px;" />
                         </div>
                         <div class="col">
-                            <p>@comp.ComputerName</p>
-                            @*<p>@comp.Description</p>*@
+                            <p><b>@comp.ComputerName</b></p>
                         </div>
                     </div>
                 }

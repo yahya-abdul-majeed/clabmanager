@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using ModelsLibrary.Models;
@@ -17,42 +19,55 @@ namespace CLabManager_Web.Areas.Admin.Controllers
         public async Task<IActionResult> Create(int? LabId)
         {
             CreateLabVM vm = new CreateLabVM();
+            HttpClient httpClient = new HttpClient();
             string url = $"https://localhost:7138/api/Labs/{LabId}";
             if (LabId != null)
             {
-                using(var httpClient = new HttpClient())
+                using (var response = await httpClient.GetAsync(url))
                 {
-                    
-                    using (var response = await httpClient.GetAsync(url))
+                    if (response.StatusCode.Equals(HttpStatusCode.OK))
                     {
-                        if (response.StatusCode.Equals(HttpStatusCode.OK))
-                        {
-                            var res = await response.Content.ReadAsStringAsync();
-                            vm.Lab = JsonConvert.DeserializeObject<Lab>(res);
-                        }
-                        else
-                        {
-                            vm.Lab = null;
-                        }
+                        var res = await response.Content.ReadAsStringAsync();
+                        vm.Lab = JsonConvert.DeserializeObject<Lab>(res);
+                    }
+                    else
+                    {
+                        vm.Lab = null;
                     }
                 }
             }
             
             url = "https://localhost:7138/api/Computers/unassigned";
-            using (var httpClient = new HttpClient())
+            using (var response = await httpClient.GetAsync(url))
             {
-                using(var response = await httpClient.GetAsync(url))
+                var apiResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var computers = JsonConvert.DeserializeObject<List<Computer>>(apiResponse);
+                vm.UnassignedComputers = computers;
+            }
+            //lab select
+            url = "https://localhost:7138/api/Labs";
+            using (var response = await httpClient.GetAsync(url))
+            {
+                var apiResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var labs = JsonConvert.DeserializeObject<List<Lab>>(apiResponse);
+                labs = labs.OrderBy(p => p.BuildingNo).ThenBy(p => p.RoomNo).ToList();
+                vm.Labs = new List<SelectListItem>();
+                foreach(var i in labs)
                 {
-                    var apiResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                    var computers = JsonConvert.DeserializeObject<List<Computer>>(apiResponse);
-                    vm.UnassignedComputers = computers;
+                    vm.Labs.Add(new SelectListItem
+                    {
+                        Text = "Building "+ i.BuildingNo.ToString() + " Room " + i.RoomNo.ToString(),
+                        Value = i.LabId.ToString()
+                    });
                 }
             }
+
+            //gridType select
             Array values = Enum.GetValues(typeof(GridType));
-            vm.items = new List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
+            vm.items = new List<SelectListItem>();
             foreach (var i in values)
             {
-                vm.items.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                vm.items.Add(new SelectListItem
                 {
                     Text = Enum.GetName(typeof(GridType), i),
                     Value = i.ToString()
