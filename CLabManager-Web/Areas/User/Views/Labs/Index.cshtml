@@ -1,0 +1,32 @@
+﻿@model IEnumerable<Lab>
+
+<form class="form-inline d-flex justify-content-center" asp-action="Index" asp-route-buildingNo="">
+    <input  class="form-control m-2" name="buildingNo"  type="number" min="0" placeholder="Search Building" style="display:inline-block;width:10rem" />
+    <input  class="form-control m-2" name="roomNo" type="number" min="0" placeholder="Search Room" style="display:inline-block;width:10rem" />
+    <button type="submit" class="btn btn-success m-2">Search</button>
+</form>
+
+
+
+<div class="d-flex justify-content-center">
+    <div class="text-center">
+        @foreach (var r in Model)
+        {
+            <div class="card m-3 bg-light" style="width:30rem" onclick="cardClick_handler(@r.LabId)">
+                <div class="card-body">
+                    <h3>Room No: @r.RoomNo</h3>
+                    <h5>Building No: @r.BuildingNo</h5>
+                    <p class="position-absolute top-0" style="right:10px; color: red">@r.Status</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function cardClick_handler(labId){
+            window.location.href = `/user/labs/labdetail/${labId}`
+        }
+    </script>
+}
