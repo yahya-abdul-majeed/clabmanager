@@ -4,16 +4,28 @@
     <div class="">
         @foreach (var r in Model)
         {
-            <div class="card m-3 bg-light" style="width:30rem;display:grid; grid-template-columns: repeat(2, 1fr)">
-                <div class="card-body" style="">
-                    <h3>@r.Title</h3>
-                    <h5>@r.Description</h5>
-                    <p class="position-absolute top-0" style="right:10px; color: red">@r.Priority</p>
+            <a style="color:inherit;text-decoration:inherit" id="toDetails" href="@Url.Action("IssueDetail","Issues",new {id = r.IssueId})">
+                <div class="card m-3 bg-light" style="width:30rem;display:grid; grid-template-columns: repeat(2, 1fr)">
+                    <div class="card-body" style="">
+                        <p><b>@r.Title</b></p>
+                        <p>@r.Description</p>
+                        <p class="position-absolute top-0" style="right:10px; color: red">@r.Priority</p>
+                    </div>
+                    <div class="card-body" style="">
+                        <p class="m-0"><b>Room no:</b> @r.Lab.RoomNo</p>
+                        <p class="m-0"><b>Building no:</b> @r.Lab.BuildingNo</p>
+                        <p class="m-0"><b>Computer:</b> @r.Computer.ComputerName</p>
+                    </div>
                 </div>
-                <div class="card-body" style="">
-                    asdsadfs
-                </div>
-            </div>
+           </a>
         }
     </div>
 </div>
+
+
+@section Scripts{
+    <script>
+
+    </script>
+}
+ 

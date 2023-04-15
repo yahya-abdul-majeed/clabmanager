@@ -13,6 +13,9 @@ namespace ModelsLibrary.Models
         [ForeignKey("Computer")]
         public int ComputerId { get; set; } 
         public Computer Computer { get; set; }
+        [ForeignKey("Lab")]
+        public int LabId { get; set; }
+        public Lab Lab { get;set; }
 
         //submitted by: user
     }

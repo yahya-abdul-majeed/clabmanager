@@ -11,5 +11,6 @@ namespace ModelsLibrary.Models.DTO
         public IssueState State { get; set; }
         [ForeignKey("Computer")]
         public int ComputerId { get; set; }
+        public int LabId { get; set; }
     }
 }

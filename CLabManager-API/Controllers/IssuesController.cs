@@ -19,24 +19,24 @@ namespace CLabManager_API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<IssueDTO>>> GetIssues()
+        public async Task<ActionResult<IEnumerable<Issue>>> GetIssues()
         {
             if (_db.Issues == null)
                 return NotFound();
-            var issueList = await _db.Issues.ToListAsync();
-            var issueDtoList = _mapper.Map<List<IssueDTO>>(issueList);
-            return issueDtoList;
+            var issueList = await _db.Issues.Include(c=>c.Computer).Include(l=>l.Lab).ToListAsync();
+            return issueList;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<IssueDTO>> GetIssue(int id)
+        public async Task<ActionResult<Issue>> GetIssue(int id)
         {
             if (_db.Issues == null)
                 return NotFound();
-            var issue = await _db.Issues.FindAsync(id);
+            //var issue = await _db.Issues.FindAsync(id);
+            var issue = await _db.Issues.Include(c => c.Computer).Include(l => l.Lab).Where(x=>x.IssueId== id).FirstOrDefaultAsync();
             if (issue == null)
                 return NotFound();
-            return _mapper.Map<IssueDTO>(issue);
+            return issue;
         }
 
         [HttpDelete("{id}")]
@@ -62,5 +62,27 @@ namespace CLabManager_API.Controllers
             await _db.SaveChangesAsync();
             return CreatedAtAction(nameof(GetIssue), new { id = issue.IssueId }, _mapper.Map<IssueDTO>(issue));
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<IssueUpdateDTO>> UpdateIssue(int id, IssueUpdateDTO dto)
+        {
+            if (id != dto.IssueId)
+            {
+                return BadRequest();
+            }
+            var issue = await _db.Issues.FindAsync(id);
+            if (issue is null)
+            {
+                return NotFound();
+            }
+            issue.Priority = dto.Priority;
+            issue.State = dto.State;
+
+            _db.Update(issue);
+            await _db.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetIssue), new { id = issue.IssueId }, issue);
+        }
+
     }
 }

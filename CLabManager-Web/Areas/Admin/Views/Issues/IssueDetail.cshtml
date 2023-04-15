@@ -1,4 +1,30 @@
-﻿@model Issue
+﻿@model ModelsLibrary.Models.ViewModels.IssueDetailVM
 
-<div>testing issue detail @Model.IssueId</div>
-<div>@Model.Title</div>
+<div class="container w-50 bg-info">
+    <h1>Title: @Model.Issue.Title</h1>
+    <h4>Description: @Model.Issue.Description</h4>
+    <h4>Computer: @Model.Issue.Computer.ComputerName with Id: @Model.Issue.ComputerId</h4>
+    <h4>Lab: @Model.Issue.Lab.LabId</h4>
+    <h4>Room no: @Model.Issue.Lab.RoomNo</h4>
+    <h4>Building no: @Model.Issue.Lab.BuildingNo</h4>
+
+    <form class="m-4" asp-action="IssueUpdate">
+        <input hidden name="IssueId" asp-for="@Model.Issue.IssueId" />
+        <label for="State">Issue Status</label>
+        <select name="State" class="form-select w-25" asp-items="@Model.Items">
+        </select>
+        <label for="Priority">Issue Priority</label>
+        <select name="Priority" class="form-select w-25" asp-items="@Model.PItems">
+        </select>
+        <button class="btn btn-success my-3" type="submit">Submit</button>
+    </form>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function(){
+            $('[value=@Model.Issue.Priority]').attr("selected","selected");
+            $('[value=@Model.Issue.State]').attr("selected", "selected");
+        })
+    </script>
+}

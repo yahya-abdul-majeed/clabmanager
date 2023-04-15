@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ModelsLibrary.Models;
+using ModelsLibrary.Models.DTO;
+using ModelsLibrary.Models.ViewModels;
+using ModelsLibrary.Utilities;
 using Newtonsoft.Json;
 
 namespace CLabManager_Web.Areas.Admin.Controllers
@@ -24,13 +28,47 @@ namespace CLabManager_Web.Areas.Admin.Controllers
         public async Task<IActionResult> IssueDetail(int id)
         {
             var httpClient = new HttpClient();
-            Issue issue;
+            IssueDetailVM vm = new IssueDetailVM();
             using(var response = await httpClient.GetAsync($"https://localhost:7138/api/Issues/{id}"))
             {
                 var apiResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult(); 
-                issue = JsonConvert.DeserializeObject<Issue>(apiResponse);
+                vm.Issue = JsonConvert.DeserializeObject<Issue>(apiResponse);
             }
-            return View(issue);
+            Array values = Enum.GetValues(typeof(IssueState));
+            Array values2 = Enum.GetValues(typeof(IssuePriority));
+            vm.Items = new List<SelectListItem>();
+            vm.PItems = new List<SelectListItem>();
+            foreach(var i in values)
+            {
+                vm.Items.Add(new SelectListItem
+                {
+                    Text = Enum.GetName(typeof(IssueState), i),
+                    Value = i.ToString()
+                }); 
+            }
+            foreach(var i in values2)
+            {
+                vm.PItems.Add(new SelectListItem
+                {
+                    Text = Enum.GetName(typeof(IssuePriority), i),
+                    Value = i.ToString()
+                });
+            }
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> IssueUpdate(IssueUpdateDTO dto)
+        {
+            StringContent content = new StringContent(JsonConvert.SerializeObject(dto));
+            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            var httpClient = new HttpClient();
+            using (var response = await httpClient.PutAsync($"https://localhost:7138/api/issues/{dto.IssueId}", content))
+            {
+                var apiResponse = await response.Content.ReadAsStringAsync();
+            }
+
+            return RedirectToAction("IssueDetail", new { id = dto.IssueId});
         }
     }
 }

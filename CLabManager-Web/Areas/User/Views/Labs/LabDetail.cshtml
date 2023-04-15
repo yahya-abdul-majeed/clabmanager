@@ -63,8 +63,10 @@
                       title: $('#issueTitle').val(),
                       description: $('#issueDesc').val(),
                       state: 0,
-                      computerId: currentCompId
+                      computerId: currentCompId,
+                      labId: lab.LabId
                     }
+                    console.log(formData)
                     $.ajax({
                         type:"POST",
                         url: "https://localhost:7138/api/Issues",
