@@ -42,7 +42,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area=User}/{controller=Labs}/{action=Index}/{id?}"
+    pattern: "{area=Admin}/{controller=Issues}/{action=Index}/{id?}"
 );
 
 

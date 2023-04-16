@@ -1,21 +1,36 @@
-﻿@model List<Issue>
+﻿@model ModelsLibrary.Models.ViewModels.IssueIndexVM
+
+<form class="form-inline d-flex justify-content-center" asp-action="Index">
+    <input class="form-control m-2" name="buildingNo" type="number" min="0" placeholder="Search Building" style="display:inline-block;width:10rem" />
+    <input class="form-control m-2" name="roomNo" type="number" min="0" placeholder="Search Room" style="display:inline-block;width:10rem" />
+    <select name="state" asp-items="@Model.Items" class="form-select m-2 " style="width:200px;">
+        <option value="All">All</option>
+    </select>
+    <select name="priority" asp-items="@Model.PItems" class="form-select m-2 " style="width:200px;">
+        <option value="All">All</option>
+    </select>
+    <button type="submit" class="btn btn-success m-2">Search</button>
+</form>
 
 <div class="d-flex justify-content-center">
     <div class="">
-        @foreach (var r in Model)
+        @foreach (var r in Model.Issues)
         {
             <a style="color:inherit;text-decoration:inherit" id="toDetails" href="@Url.Action("IssueDetail","Issues",new {id = r.IssueId})">
                 <div class="card m-3 bg-light" style="width:30rem;display:grid; grid-template-columns: repeat(2, 1fr)">
                     <div class="card-body" style="">
                         <p><b>@r.Title</b></p>
                         <p>@r.Description</p>
-                        <p class="position-absolute top-0" style="right:10px; color: red">@r.Priority</p>
+                        
                     </div>
                     <div class="card-body" style="">
                         <p class="m-0"><b>Room no:</b> @r.Lab.RoomNo</p>
                         <p class="m-0"><b>Building no:</b> @r.Lab.BuildingNo</p>
                         <p class="m-0"><b>Computer:</b> @r.Computer.ComputerName</p>
                     </div>
+                    <p class="position-absolute top-0" style="right:10px; color: red">@r.Priority</p>
+                    <p class="position-absolute" style="right:10px;top:20px; color: red">@r.State</p>
+
                 </div>
            </a>
         }

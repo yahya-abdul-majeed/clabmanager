@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ModelsLibrary.Models;
 using ModelsLibrary.Models.DTO;
@@ -11,18 +12,61 @@ namespace CLabManager_Web.Areas.Admin.Controllers
     [Area("Admin")]
     public class IssuesController : Controller
     {
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? roomNo =0, int? buildingNo =0, string? priority = null, string? state = null)
         {
-            List<Issue> issues = new List<Issue>();
+            IssueIndexVM vm = new IssueIndexVM();
             using(var httpClient = new HttpClient())
             {
                 using(var response = await httpClient.GetAsync("https://localhost:7138/api/Issues"))
                 {
                     var apiResponse = await response.Content.ReadAsStringAsync();
-                    issues = JsonConvert.DeserializeObject<List<Issue>>(apiResponse);   
+                    vm.Issues = JsonConvert.DeserializeObject<List<Issue>>(apiResponse);   
+                }
+                //checking for building and room no's
+                if (buildingNo != 0 && roomNo != 0)
+                {
+                    vm.Issues = vm.Issues.Where(l => l.Lab.BuildingNo == buildingNo).ToList();
+                    vm.Issues = vm.Issues.Where(l => l.Lab.RoomNo == roomNo).ToList();
+                }
+                else if (roomNo == 0 && buildingNo != 0)
+                {
+                    vm.Issues = vm.Issues.Where(l => l.Lab.BuildingNo == buildingNo).ToList();
+                }
+                else if (buildingNo == 0 && roomNo != 0)
+                {
+                    vm.Issues = vm.Issues.Where(l => l.Lab.RoomNo == roomNo).ToList();
+                }
+                //checking for state and priority
+                if(priority != "All" && priority != null)
+                {
+                    vm.Issues = vm.Issues.Where(l=>l.Priority.ToString() ==priority).ToList();  
+                }
+                if(state != "All" && state != null)
+                {
+                    vm.Issues = vm.Issues.Where(l=>l.State.ToString() == state).ToList();
                 }
             }
-            return View(issues);
+            Array values = Enum.GetValues(typeof(IssueState));
+            Array values2 = Enum.GetValues(typeof(IssuePriority));
+            vm.Items = new List<SelectListItem>();
+            vm.PItems = new List<SelectListItem>();
+            foreach (var i in values)
+            {
+                vm.Items.Add(new SelectListItem
+                {
+                    Text = Enum.GetName(typeof(IssueState), i),
+                    Value = i.ToString()
+                });
+            }
+            foreach(var i in values2)
+            {
+                vm.PItems.Add(new SelectListItem
+                {
+                    Text = Enum.GetName(typeof(IssuePriority), i),
+                    Value = i.ToString()
+                });
+            }
+            return View(vm);
         }
 
         public async Task<IActionResult> IssueDetail(int id)
