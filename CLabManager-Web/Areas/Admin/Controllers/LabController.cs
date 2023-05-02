@@ -20,6 +20,7 @@ namespace CLabManager_Web.Areas.Admin.Controllers
         {
             CreateLabVM vm = new CreateLabVM();
             HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Request.Cookies[SD.XAccessToken]);
             string url = $"https://localhost:7138/api/Labs/{LabId}";
             if (LabId != null)
             {

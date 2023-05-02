@@ -27,7 +27,7 @@
     }
     public static class SD
     {
-       
+        public const string XAccessToken = "X-Access-Token";
 
        
 

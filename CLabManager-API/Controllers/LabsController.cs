@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using CLabManager_API.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ModelsLibrary.Models;
@@ -19,7 +21,8 @@ namespace CLabManager_API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        
+        [HttpGet, Authorize]
         public async Task<ActionResult<IEnumerable<Lab>>> GetLabs()
         {
             if(_db.Labs== null)

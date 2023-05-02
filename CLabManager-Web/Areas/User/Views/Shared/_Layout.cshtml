@@ -12,7 +12,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CLabManager</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Labs" asp-action="Index">CLabManager</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -23,8 +23,18 @@
                             <a class="nav-link text-dark" asp-area="User" asp-controller="Labs" asp-action="Index">Labs</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Issues" asp-action="Privacy">Issues</a>
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Issues" asp-action="Index">Issues</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Lab" asp-action="Create">Create Lab</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="User" asp-controller="Authentication" asp-action="Login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="User" asp-controller="Authentication" asp-action="Register">Register</a>
+                        </li>
+
                     </ul>
                 </div>
             </div>

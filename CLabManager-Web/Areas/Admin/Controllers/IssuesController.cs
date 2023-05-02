@@ -15,9 +15,10 @@ namespace CLabManager_Web.Areas.Admin.Controllers
         public async Task<IActionResult> Index(int? roomNo =0, int? buildingNo =0, string? priority = null, string? state = null)
         {
             IssueIndexVM vm = new IssueIndexVM();
-            using(var httpClient = new HttpClient())
+            using (var httpClient = new HttpClient())
             {
-                using(var response = await httpClient.GetAsync("https://localhost:7138/api/Issues"))
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Request.Cookies[SD.XAccessToken]);
+                using (var response = await httpClient.GetAsync("https://localhost:7138/api/Issues"))
                 {
                     var apiResponse = await response.Content.ReadAsStringAsync();
                     vm.Issues = JsonConvert.DeserializeObject<List<Issue>>(apiResponse);   

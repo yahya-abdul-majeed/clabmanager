@@ -1,10 +1,12 @@
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddHttpContextAccessor();
+//builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
 var app = builder.Build();
 
@@ -42,7 +44,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area=Admin}/{controller=Issues}/{action=Index}/{id?}"
+    pattern: "{area=User}/{controller=Authentication}/{action=Login}/{id?}"
 );
 
 
