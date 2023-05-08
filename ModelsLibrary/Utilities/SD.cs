@@ -1,4 +1,11 @@
-﻿namespace ModelsLibrary.Utilities
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+using ModelsLibrary.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Security.Claims;
+
+namespace ModelsLibrary.Utilities
 {
     public enum GridType
     {
@@ -29,7 +36,22 @@
     {
         public const string XAccessToken = "X-Access-Token";
 
-       
+        
+
+       public static ClaimsPrincipal getPrincipal()
+        {
+            var httpContextAccessor = new HttpContextAccessor();
+            var token = httpContextAccessor.HttpContext?.Request.Cookies[XAccessToken];
+            if (token != null)
+            {
+                var jwtSecurityToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
+                return new ClaimsPrincipal(new ClaimsIdentity(jwtSecurityToken.Claims, JwtBearerDefaults.AuthenticationScheme));
+            }
+            else
+            {
+                return new ClaimsPrincipal();
+            }
+        }
 
     }
 }

@@ -1,5 +1,21 @@
 ﻿var idCount = 0
 
+function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
 $(document).ready(function () {
     if (lab) {
         console.log("this is room no", lab.RoomNo)
@@ -25,12 +41,13 @@ $(document).ready(function () {
             type: "POST",
             url: "https://localhost:7138/api/Computers",
             headers: {
-                'content-type': 'application/json;'
+                'content-type': 'application/json;',
+                'Authorization': 'Bearer '+ getCookie('X-Access-Token')
             },
             data: formData,
             success: () => {
                 var mydiv = document.querySelector("#unassignedcomps")
-                fetch("https://localhost:7138/api/Computers/unassigned")
+                fetch("https://localhost:7138/api/Computers/unassigned", { headers: { 'Authorization': 'Bearer ' + getCookie('X-Access-Token') }})
                     .then(response => response.json())
                     .then(computers => {
                         mydiv.innerHTML = '';
@@ -110,7 +127,8 @@ function drop_unassigned_handler(event) {
     var options = {
         method: "PUT",
         headers: {
-            'content-type': 'application/json'
+            'content-type': 'application/json',
+            'Authorization': 'Bearer ' + getCookie('X-Access-Token')
         },
         body: JSON.stringify({
             positionOnGrid: null,
@@ -156,7 +174,8 @@ function createSingleAllotment() {
             var options = {
                 method: "PUT",
                 headers: {
-                    'content-type':'application/json'
+                    'content-type': 'application/json',
+                    'Authorization': 'Bearer ' + getCookie('X-Access-Token')
                     },
                 body: JSON.stringify({
                     positionOnGrid: box.id,

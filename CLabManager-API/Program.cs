@@ -24,9 +24,9 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         policy =>
         {
-            policy.WithOrigins("*")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
         });
 });
 
@@ -63,17 +63,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-builder.Services.AddIdentity<IdentityUser,IdentityRole>(options=>
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
-    
+
     options.SignIn.RequireConfirmedAccount = false;
     options.User.RequireUniqueEmail = true;
     options.Password.RequireDigit = false;
     options.Password.RequiredLength = 6;
-    options.Password.RequireNonAlphanumeric= false;
-    options.Password.RequireUppercase= false;
-    options.Password.RequireLowercase= false;
-}).AddEntityFrameworkStores<ApplicationDbContext>();
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+}).AddEntityFrameworkStores<ApplicationDbContext>()
+.AddRoles<IdentityRole>();
 
 builder.Services.AddAuthentication(options =>
 {

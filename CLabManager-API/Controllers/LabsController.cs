@@ -10,6 +10,7 @@ using ModelsLibrary.Models.DTO;
 namespace CLabManager_API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Roles = "User,Admin")]
     public class LabsController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
@@ -22,7 +23,8 @@ namespace CLabManager_API.Controllers
         }
 
         
-        [HttpGet, Authorize]
+        [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Lab>>> GetLabs()
         {
             if(_db.Labs== null)
@@ -41,6 +43,7 @@ namespace CLabManager_API.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Lab>> GetLab(int id)
         {
             if (_db.Labs == null)
@@ -58,6 +61,7 @@ namespace CLabManager_API.Controllers
         
 
         [HttpDelete("{id}")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> DeleteLab(int id)
         {
             if (_db.Labs == null)
@@ -73,6 +77,7 @@ namespace CLabManager_API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Lab>> PostLab(LabCreationDTO LabDTO)
         {
             if(_db.Labs == null)

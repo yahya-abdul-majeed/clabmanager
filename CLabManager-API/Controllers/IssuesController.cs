@@ -9,6 +9,7 @@ using ModelsLibrary.Models.DTO;
 namespace CLabManager_API.Controllers
 {
     [Route("api/[controller]")]
+    
     public class IssuesController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
@@ -28,7 +29,7 @@ namespace CLabManager_API.Controllers
             return issueList;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"),Authorize]
         public async Task<ActionResult<Issue>> GetIssue(int id)
         {
             if (_db.Issues == null)
@@ -41,6 +42,7 @@ namespace CLabManager_API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteIssue(int id)
         {
             if (_db.Issues == null)
@@ -53,7 +55,7 @@ namespace CLabManager_API.Controllers
             return NoContent();
         }
 
-        [HttpPost]
+        [HttpPost,Authorize]
         public async Task<ActionResult<Issue>> PostIssue(IssueCreationDTO issueDTO)
         {
             if (_db.Issues == null)
@@ -65,6 +67,7 @@ namespace CLabManager_API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IssueUpdateDTO>> UpdateIssue(int id, IssueUpdateDTO dto)
         {
             if (id != dto.IssueId)

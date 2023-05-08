@@ -9,13 +9,15 @@ namespace CLabManager_API.Services
 {
     public class JwtService
     {
-        private const int EXPIRATION_MINUTES = 10;
+        private const int EXPIRATION_MINUTES = 10000;
         
         private readonly IConfiguration _configuration;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public JwtService(IConfiguration configuration)
+        public JwtService(IConfiguration configuration,UserManager<IdentityUser> userManager)
         {
             _configuration = configuration;
+            _userManager = userManager;
         }
 
         public AuthenticationResponse CreateToken(IdentityUser user)
@@ -40,15 +42,23 @@ namespace CLabManager_API.Services
                 signingCredentials: sc
             );
 
-        private Claim[] CreateClaims(IdentityUser user) =>
-            new Claim[] { 
+        private Claim[] CreateClaims(IdentityUser user)
+        {
+            string role;
+            if (_userManager.IsInRoleAsync(user, "Admin").GetAwaiter().GetResult())
+                role = "Admin";
+            else
+                role = "User";
+            return new Claim[] {
                 new Claim(JwtRegisteredClaimNames.Sub,_configuration["Jwt:Subject"]),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat,DateTime.UtcNow.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name,user.UserName),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role,role)
             };
+        }
 
         private SigningCredentials CreateSigningCredentials() =>
             new SigningCredentials(

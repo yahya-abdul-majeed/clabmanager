@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.SignalR.Protocol;
 using ModelsLibrary.Models;
 using ModelsLibrary.Models.DTO;
 using ModelsLibrary.Models.ViewModels;
@@ -18,6 +15,10 @@ namespace CLabManager_Web.Areas.Admin.Controllers
     {
         public async Task<IActionResult> Create(int? LabId)
         {
+            if (SD.getPrincipal().Identity == null)
+                return RedirectToAction("AccessDenied", "Authentication", new { Area = "User" });
+            if (SD.getPrincipal().IsInRole("User"))
+                return RedirectToAction("AccessDenied", "Authentication", new { Area = "User" });
             CreateLabVM vm = new CreateLabVM();
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Request.Cookies[SD.XAccessToken]);
@@ -80,6 +81,8 @@ namespace CLabManager_Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateLab(LabCreationDTO dto)
         {
+            if (SD.getPrincipal().IsInRole("User"))
+                return RedirectToAction("AccessDenied", "Authentication", new { Area = "User" });
             var url = "https://localhost:7138/api/Labs";
             Lab lab;
             var obj = new
@@ -92,6 +95,7 @@ namespace CLabManager_Web.Areas.Admin.Controllers
             StringContent content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
             using (var httpClient = new HttpClient())
             {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Request.Cookies[SD.XAccessToken]);
                 using (var response = await httpClient.PostAsync(url, content))
                 {
                     var apiResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();

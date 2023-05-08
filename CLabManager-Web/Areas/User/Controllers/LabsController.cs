@@ -54,6 +54,7 @@ namespace CLabManager_Web.Areas.User.Controllers
         public async Task<IActionResult> LabDetail(int id)
         {
             var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Request.Cookies[SD.XAccessToken]);
             LabDetailVM vm = new LabDetailVM();
             using(var response = await httpClient.GetAsync($"https://localhost:7138/api/Labs/{id}"))
             {

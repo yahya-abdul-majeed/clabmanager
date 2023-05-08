@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,13 +39,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 
 app.MapControllerRoute(
     name: "areas",
-    pattern: "{area=User}/{controller=Authentication}/{action=Login}/{id?}"
+    pattern: "{area=User}/{controller=Labs}/{action=Index}/{id?}"
 );
 
 

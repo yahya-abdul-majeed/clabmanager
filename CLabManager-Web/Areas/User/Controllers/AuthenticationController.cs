@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ModelsLibrary.Models;
 using ModelsLibrary.Utilities;
 using Newtonsoft.Json;
+using NuGet.Common;
 using System.ComponentModel.Design.Serialization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace CLabManager_Web.Areas.User.Controllers
 {
@@ -31,7 +35,8 @@ namespace CLabManager_Web.Areas.User.Controllers
                     {
                         var apiResponse = await response.Content.ReadAsStringAsync();
                         var loginResponse = JsonConvert.DeserializeObject<LoginResponse>(apiResponse);
-                        Response.Cookies.Append(SD.XAccessToken, loginResponse.authResponse.Token );                       
+                        Response.Cookies.Append(SD.XAccessToken, loginResponse.authResponse.Token );
+                        return RedirectToAction("Index", "Labs", new { Area = "User" });
                     }
                 }
             }
@@ -58,9 +63,22 @@ namespace CLabManager_Web.Areas.User.Controllers
                         var apiResponse = await response.Content.ReadAsStringAsync();
                         var authResponse = JsonConvert.DeserializeObject<AuthenticationResponse>(apiResponse);
                         Response.Cookies.Append(SD.XAccessToken, authResponse.Token);
+                        return RedirectToAction("Index","Labs");
                     }
                 }
             }
+            return View();
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Response.Cookies.Delete(SD.XAccessToken);
+            return RedirectToAction("Index", "Labs");
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
             return View();
         }
     }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.Features;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ModelsLibrary.Models;
@@ -14,6 +14,10 @@ namespace CLabManager_Web.Areas.Admin.Controllers
     {
         public async Task<IActionResult> Index(int? roomNo =0, int? buildingNo =0, string? priority = null, string? state = null)
         {
+            if(SD.getPrincipal().Identity == null)
+                return RedirectToAction("AccessDenied", "Authentication", new { Area = "User" });
+            if (SD.getPrincipal().IsInRole("User"))
+                return RedirectToAction("AccessDenied", "Authentication",new {Area = "User"});
             IssueIndexVM vm = new IssueIndexVM();
             using (var httpClient = new HttpClient())
             {
@@ -70,9 +74,12 @@ namespace CLabManager_Web.Areas.Admin.Controllers
             return View(vm);
         }
 
-        public async Task<IActionResult> IssueDetail(int id)
+        public async Task<IActionResult> IssueDetail(int id)    
         {
+            if (SD.getPrincipal().IsInRole("User"))
+                return RedirectToAction("AccessDenied", "Authentication", new { Area = "User" });
             var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Request.Cookies[SD.XAccessToken]);
             IssueDetailVM vm = new IssueDetailVM();
             using(var response = await httpClient.GetAsync($"https://localhost:7138/api/Issues/{id}"))
             {
@@ -105,9 +112,13 @@ namespace CLabManager_Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> IssueUpdate(IssueUpdateDTO dto)
         {
+            //var test = User.Identity.Name;
+            //var duck = typeof(HttpContext).GetInterfaces();
+            //var st =  base.Accepted();
             StringContent content = new StringContent(JsonConvert.SerializeObject(dto));
             content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
             var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Request.Cookies[SD.XAccessToken]);
             using (var response = await httpClient.PutAsync($"https://localhost:7138/api/issues/{dto.IssueId}", content))
             {
                 var apiResponse = await response.Content.ReadAsStringAsync();

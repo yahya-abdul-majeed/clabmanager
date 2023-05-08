@@ -4,10 +4,12 @@ using ModelsLibrary.Models;
 using ModelsLibrary.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CLabManager_API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Roles ="Admin,User")]
     public class ComputersController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
@@ -56,6 +58,7 @@ namespace CLabManager_API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> DeleteComputer(int id)
         {
             if (_db.Computers == null)
@@ -71,6 +74,7 @@ namespace CLabManager_API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Computer>> PostComputer(ComputerCreationDTO ComputerDTO)
         {
             if (_db.Computers == null)
@@ -82,6 +86,7 @@ namespace CLabManager_API.Controllers
             return CreatedAtAction("GetComputer", new {id = computer.ComputerId}, _mapper.Map<ComputerDTO>(computer));
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ComputerDTO>> UpdateComputer(int id,ComputerDTO ComputerDTO)
         {
             if (id != ComputerDTO.ComputerId)
@@ -96,6 +101,7 @@ namespace CLabManager_API.Controllers
         }
         [HttpPut]
         [Route("ispositioned/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ComputerDTO>> UpdatePositionStatus(int id, PositionUpdateDTO dto)
         {
             if (_db.Computers == null)
