@@ -1,12 +1,19 @@
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.FileProviders;
+using NToastNotify;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddMvc().AddNToastNotifyToastr(new ToastrOptions()
+{
+    ProgressBar = false,
+    PositionClass = ToastPositions.TopRight
+}); 
+
 //builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
 var app = builder.Build();
@@ -21,20 +28,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-//app.UseStaticFiles(new StaticFileOptions
-//{
-//    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "node_modules")),
-//    RequestPath = "/node_modules"
-//});
-
-//app.UseFileServer(new FileServerOptions()
-//{
-//    FileProvider = new PhysicalFileProvider(
-//        Path.Combine(Directory.GetCurrentDirectory(), @"node_modules")),
-//    RequestPath = new PathString("/node_modules"),
-//    EnableDirectoryBrowsing = true
-//});
-
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -42,7 +35,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
+app.UseNToastNotify();
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area=User}/{controller=Labs}/{action=Index}/{id?}"

@@ -1,6 +1,9 @@
 ﻿@model ModelsLibrary.Models.ViewModels.LabDetailVM
+@using NToastNotify
+@inject IToastNotification _toastNotification
 @{
     var labModel = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Lab);
+
 }
 
 <!-- Modal start-->
@@ -27,7 +30,6 @@
                     <div class="form-group mb-2">
                         <label for="priorities">Issue priority</label>
                         <select class="form-select" id="priorities" name="priorities" asp-items="Model.priorities">
-
                         </select>
                     </div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -40,13 +42,12 @@
 <!--Model end-->
 
 <div id="gridContainer" class="container">
-
 </div>
 
 @section Scripts{
     <script>
         var lab = @Html.Raw(labModel)
-        var idCount = 0
+                var idCount = 0
         var currentCompId = null
 
         function getCookie(cname) {
@@ -65,45 +66,46 @@
             return "";
         }
 
-        $(document).ready(function(){
-                if (lab.GridType === 1) {
-                    drawGridType1()
-                } else if (lab.GridType === 2) {
-                    drawGridType2()
-                }
-                assignComputersToGrid()
+        $(document).ready(function () {
+            if (lab.GridType === 1) {
+                drawGridType1()
+            } else if (lab.GridType === 2) {
+                drawGridType2()
+            }
+            assignComputersToGrid()
 
-                $('#issueCreationSave').click(function(){
-                    let formData = {
-                      priority: $('#priorities').val(),
-                      title: $('#issueTitle').val(),
-                      description: $('#issueDesc').val(),
-                      state: 0,
-                      computerId: currentCompId,
-                      labId: lab.LabId
+            $('#issueCreationSave').click(function () {
+                let formData = {
+                    priority: $('#priorities').val(),
+                    title: $('#issueTitle').val(),
+                    description: $('#issueDesc').val(),
+                    state: 0,
+                    computerId: currentCompId,
+                    labId: lab.LabId
+                }
+                console.log(formData)
+                $.ajax({
+                    type: "POST",
+                    url: "https://localhost:7138/api/Issues",
+                    headers: {
+                        "content-type": "application/json",
+                        'Authorization': 'Bearer ' + getCookie('X-Access-Token')
+                    },
+                    data: JSON.stringify(formData),
+                    success: function () {
+                        console.log("request successful for issue post")
+                        $('#issueTitle').val('')
+                        $('#issueDesc').val('')
+                        $('#priorities').val('Urgent')
+                        toastr.success('Issue Submitted')
+                    },
+                    error: function () {
+                        console.log("error for issue post")
+                        toastr.error('Submit Failed')
                     }
-                    console.log(formData)
-                    $.ajax({
-                        type:"POST",
-                        url: "https://localhost:7138/api/Issues",
-                        headers:{
-                            "content-type":"application/json",
-                            'Authorization': 'Bearer ' + getCookie('X-Access-Token')
-                        },
-                        data:JSON.stringify(formData),
-                        success: function(){
-                            console.log("request successful for issue post")
-                            $('#issueTitle').val('')
-                            $('#issueDesc').val('')
-                            $('#priorities').val('Urgent')
-                        },
-                        error: function(){
-                            console.log("error for issue post")
-                           
-                        }
-                    })
-                    console.log(formData)
                 })
+                console.log(formData)
+            })
         })
         function createSingleAllotment() {
             var box = document.createElement('div');
@@ -115,7 +117,7 @@
             box.style.margin = "5px";
             box.style.padding = "0px"
             box.classList.add("col-2")
-            
+
             return box;
         }
 
@@ -182,7 +184,7 @@
         }
 
         function assignComputersToGrid() {
-                lab.ComputerList.map(computer => {
+            lab.ComputerList.map(computer => {
                 var myimg = document.createElement('img')
                 myimg.id = computer.ComputerId
                 myimg.name = computer.ComputerName
@@ -193,7 +195,7 @@
                 myimg.style.height = "80px"
                 //myimg.setAttribute('data-bs-toggle','modal')
                 //myimg.setAttribute('data-bs-target','#computerModal')
-                myimg.onclick = function(){
+                myimg.onclick = function () {
                     console.log('clickd image')
                     $('#IssueHeader').html(`Issue for computer: ${myimg.name}, LabId: ${lab.LabId}`)
                     currentCompId = myimg.id

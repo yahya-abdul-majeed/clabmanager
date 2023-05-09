@@ -6,12 +6,18 @@ using ModelsLibrary.Models.DTO;
 using ModelsLibrary.Models.ViewModels;
 using ModelsLibrary.Utilities;
 using Newtonsoft.Json;
+using NToastNotify;
 
 namespace CLabManager_Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class IssuesController : Controller
     {
+        private readonly IToastNotification _toastNotification;
+        public IssuesController(IToastNotification toastNotification)
+        {
+            _toastNotification = toastNotification;
+        }
         public async Task<IActionResult> Index(int? roomNo =0, int? buildingNo =0, string? priority = null, string? state = null)
         {
             if(SD.getPrincipal().Identity == null)
@@ -74,6 +80,15 @@ namespace CLabManager_Web.Areas.Admin.Controllers
             return View(vm);
         }
 
+        public void Redirecter(int? roomNo = 0, int? buildingNo = 0, string? priority = null, string? state = null)
+        {
+            Response.Redirect($"https://localhost:7183/Admin/Issues?roomNo={roomNo}&buildingNo={buildingNo}&priority={priority}&state={state}");
+        }
+        public void Clearer()
+        {
+            Response.Redirect($"https://localhost:7183/Admin/Issues");
+        }
+
         public async Task<IActionResult> IssueDetail(int id)    
         {
             if (SD.getPrincipal().IsInRole("User"))
@@ -121,7 +136,15 @@ namespace CLabManager_Web.Areas.Admin.Controllers
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Request.Cookies[SD.XAccessToken]);
             using (var response = await httpClient.PutAsync($"https://localhost:7138/api/issues/{dto.IssueId}", content))
             {
-                var apiResponse = await response.Content.ReadAsStringAsync();
+                if(response.StatusCode == System.Net.HttpStatusCode.Created)
+                {
+                    var apiResponse = await response.Content.ReadAsStringAsync();
+                    _toastNotification.AddSuccessToastMessage("Issue Updated");
+                }
+                else
+                {
+                    _toastNotification.AddErrorToastMessage("Issue Update Failed");
+                }
             }
 
             return RedirectToAction("IssueDetail", new { id = dto.IssueId});

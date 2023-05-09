@@ -34,16 +34,25 @@ namespace CLabManager_API.Controllers
             {
                 return NotFound();
             }
-            var token = _jwtService.CreateToken(user);
-            return new LoginResponse
+            
+            if(await _userManager.CheckPasswordAsync(user, userData.Password))
             {
-                authResponse = token,
-                data = new
+                var token = _jwtService.CreateToken(user);
+                return new LoginResponse
                 {
-                    email = user.Email,
-                    name = user.UserName
-                }
-            };
+                    authResponse = token,
+                    data = new
+                    {
+                        email = user.Email,
+                        name = user.UserName
+                    }
+                };
+            }
+            else
+            {
+                return NotFound();
+            }
+            
         }
 
         [HttpPost("signup")]

@@ -1,15 +1,29 @@
 ﻿@model ModelsLibrary.Models.ViewModels.IssueIndexVM
 
-<form class="form-inline d-flex justify-content-center" asp-action="Index">
-    <input class="form-control m-2" name="buildingNo" type="number" min="0" placeholder="Search Building" style="display:inline-block;width:10rem" />
-    <input class="form-control m-2" name="roomNo" type="number" min="0" placeholder="Search Room" style="display:inline-block;width:10rem" />
+<form class="form-inline d-flex justify-content-center" asp-action="Redirecter">
+    <input value="@Context.Request.Query["buildingNo"]" class="form-control m-2" name="buildingNo" type="number" min="0" placeholder="Search Building" style="display:inline-block;width:10rem" />
+    <input value="@Context.Request.Query["roomNo"]" class="form-control m-2" name="roomNo" type="number" min="0" placeholder="Search Room" style="display:inline-block;width:10rem" />
     <select name="state" asp-items="@Model.Items" class="form-select m-2 " style="width:200px;">
-        <option value="All">All</option>
+        @if(Context.Request.Query["state"] != "")
+        {
+            <option value="@Context.Request.Query["state"]">@Context.Request.Query["state"]</option>
+        }
+        else{
+            <option value="All">All</option>
+        }
+        
     </select>
     <select name="priority" asp-items="@Model.PItems" class="form-select m-2 " style="width:200px;">
-        <option value="All">All</option>
+         @if(Context.Request.Query["state"]!= "")
+        {
+            <option value="@Context.Request.Query["priority"]">@Context.Request.Query["priority"]</option>
+        }
+        else{
+            <option value="All">All</option>
+        }
     </select>
     <button type="submit" class="btn btn-success m-2">Search</button>
+    <a type="button" class="btn btn-warning m-2" asp-action="Clearer">Clear</a>
 </form>
 
 <div class="d-flex justify-content-center">

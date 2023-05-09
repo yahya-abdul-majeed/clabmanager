@@ -1,9 +1,10 @@
 ﻿@model IEnumerable<ModelsLibrary.Models.Lab>
 
-<form class="form-inline d-flex justify-content-center" asp-action="Index" >
-    <input  class="form-control m-2" name="buildingNo"  type="number" min="0" placeholder="Search Building" style="display:inline-block;width:10rem" />
-    <input  class="form-control m-2" name="roomNo" type="number" min="0" placeholder="Search Room" style="display:inline-block;width:10rem" />
+<form class="form-inline d-flex justify-content-center" asp-action="Redirecter" >
+    <input value="@Context.Request.Query["buildingNo"]" class="form-control m-2" name="buildingNo" type="number" min="0" placeholder="Search Building" style="display:inline-block;width:10rem" />
+    <input value="@Context.Request.Query["roomNo"]" class="form-control m-2" name="roomNo" type="number" min="0" placeholder="Search Room" style="display:inline-block;width:10rem" />
     <button type="submit" class="btn btn-success m-2">Search</button>
+    <a type="button" class="btn btn-warning m-2" asp-action="Clearer">Clear</a>
 </form>
 
 

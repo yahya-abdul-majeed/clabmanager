@@ -73,6 +73,15 @@ namespace CLabManager_Web.Areas.User.Controllers
             }
             return View(vm);
         }
+        public void Redirecter(int buildingNo, int roomNo)
+        {
+            Response.Redirect($"https://localhost:7183/User/Labs?buildingNo={buildingNo}&roomNo={roomNo}");
+        }
+
+        public void Clearer()
+        {
+            Response.Redirect($"https://localhost:7183");
+        }
     }
 
     

@@ -5,6 +5,7 @@ using ModelsLibrary.Models.DTO;
 using ModelsLibrary.Models.ViewModels;
 using ModelsLibrary.Utilities;
 using Newtonsoft.Json;
+using NToastNotify;
 using System.Net;
 using System.Text;
 
@@ -13,6 +14,15 @@ namespace CLabManager_Web.Areas.Admin.Controllers
     [Area("Admin")]
     public class LabController : Controller
     {
+        private readonly IToastNotification _toastNotification;
+        public LabController(IToastNotification toastNotification)
+        {
+            _toastNotification = toastNotification;
+        }
+        public void Redirector(int? LabId)
+        {
+            Response.Redirect($"https://localhost:7183/Admin/Lab/Create?LabId={LabId}");
+        }
         public async Task<IActionResult> Create(int? LabId)
         {
             if (SD.getPrincipal().Identity == null)
@@ -84,7 +94,7 @@ namespace CLabManager_Web.Areas.Admin.Controllers
             if (SD.getPrincipal().IsInRole("User"))
                 return RedirectToAction("AccessDenied", "Authentication", new { Area = "User" });
             var url = "https://localhost:7138/api/Labs";
-            Lab lab;
+            Lab lab = new Lab();
             var obj = new
             {
                 roomNo= dto.RoomNo,
@@ -98,8 +108,17 @@ namespace CLabManager_Web.Areas.Admin.Controllers
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Request.Cookies[SD.XAccessToken]);
                 using (var response = await httpClient.PostAsync(url, content))
                 {
-                    var apiResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                    lab = JsonConvert.DeserializeObject<Lab>(apiResponse);
+                   if(response.StatusCode == HttpStatusCode.Created)
+                    {
+                        var apiResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                        lab = JsonConvert.DeserializeObject<Lab>(apiResponse);
+                        _toastNotification.AddSuccessToastMessage("Lab Created");
+                    }
+                    else
+                    {
+                        _toastNotification.AddErrorToastMessage("Lab Creation failed");
+                        return RedirectToAction("Create");
+                    }
                 }
             }
             return RedirectToAction("Create", new {LabId = lab.LabId});

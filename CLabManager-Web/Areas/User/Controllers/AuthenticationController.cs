@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using ModelsLibrary.Models;
 using ModelsLibrary.Utilities;
 using Newtonsoft.Json;
+using NToastNotify;
 using NuGet.Common;
 using System.ComponentModel.Design.Serialization;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,6 +16,13 @@ namespace CLabManager_Web.Areas.User.Controllers
     [Area("User")]
     public class AuthenticationController : Controller
     {
+        private readonly IToastNotification _toastNotification;
+
+        public AuthenticationController(IToastNotification toastNotification)
+        {
+            _toastNotification = toastNotification;
+        }
+
         public IActionResult Login()
         {
             return View();
@@ -36,10 +44,12 @@ namespace CLabManager_Web.Areas.User.Controllers
                         var apiResponse = await response.Content.ReadAsStringAsync();
                         var loginResponse = JsonConvert.DeserializeObject<LoginResponse>(apiResponse);
                         Response.Cookies.Append(SD.XAccessToken, loginResponse.authResponse.Token );
+                        _toastNotification.AddSuccessToastMessage("Successfull Login");
                         return RedirectToAction("Index", "Labs", new { Area = "User" });
                     }
                 }
             }
+            _toastNotification.AddErrorToastMessage("Error Logging in");
             return View();
         }
         public IActionResult Register()
@@ -63,10 +73,12 @@ namespace CLabManager_Web.Areas.User.Controllers
                         var apiResponse = await response.Content.ReadAsStringAsync();
                         var authResponse = JsonConvert.DeserializeObject<AuthenticationResponse>(apiResponse);
                         Response.Cookies.Append(SD.XAccessToken, authResponse.Token);
+                        _toastNotification.AddSuccessToastMessage("Successful Registration");
                         return RedirectToAction("Index","Labs");
                     }
                 }
             }
+            _toastNotification.AddErrorToastMessage("Registration Failed");
             return View();
         }
 

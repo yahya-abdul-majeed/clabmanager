@@ -85,6 +85,10 @@ $(document).ready(function () {
                     });
                 $('#computerName').val('')
                 $('#computerDesc').val('') 
+                toastr.success('Computer Created')
+            },
+            error: () => {
+                toastr.error('Computer Creation Failed')
             }
         })
         console.log("ajax request")
