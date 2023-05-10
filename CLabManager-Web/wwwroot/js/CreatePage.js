@@ -61,7 +61,16 @@ $(document).ready(function () {
                             var b = document.createElement('b')
                             b.innerHTML = computer.computerName
                             p.appendChild(b)
+
+                            console.log("before a tag")
+                            var atag = document.createElement('a')
+                            atag.classList.add("btn", "btn-danger")
+                            atag.href = `https://localhost:7183/Admin/Lab/DeleteComputer?compId=${computer.computerId}`
+                            atag.innerHTML="Delete"
+                            console.log("after a tag")
+
                             thirddiv.appendChild(p)
+                            thirddiv.appendChild(atag)
                             thirddiv.classList.add("col")
                             firstdiv.classList.add("m-2", "row", "border", "bg-white")
                             seconddiv.classList.add("col")
@@ -262,10 +271,15 @@ function drawGridType2() {
     function createStudentsRow() {
 
         var studentsRow = document.createElement('div')
+        var emptyDiv = document.createElement('div')
+        emptyDiv.classList.add("col-2")
+        emptyDiv.style.height = '100px'
+        emptyDiv.style.width = '100px'
         studentsRow.classList.add("row")
         studentsRow.classList.add("d-flex")
-        studentsRow.classList.add("justify-content-between")
+        studentsRow.classList.add("justify-content-center")
         studentsRow.appendChild(createSingleAllotment())
+        studentsRow.appendChild(emptyDiv)
         studentsRow.appendChild(createSingleAllotment())
         container.appendChild(studentsRow)
     }

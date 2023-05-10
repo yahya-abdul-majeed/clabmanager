@@ -1,29 +1,42 @@
 ﻿@model ModelsLibrary.Models.ViewModels.IssueDetailVM
 
-<div class="container w-50 bg-info">
-    <h1>Title: @Model.Issue.Title</h1>
-    <h4>Description: @Model.Issue.Description</h4>
-    <h4>Computer: @Model.Issue.Computer.ComputerName with Id: @Model.Issue.ComputerId</h4>
-    <h4>Lab: @Model.Issue.Lab.LabId</h4>
-    <h4>Room no: @Model.Issue.Lab.RoomNo</h4>
-    <h4>Building no: @Model.Issue.Lab.BuildingNo</h4>
+<div class="container w-50" style="border: 2px solid black; border-radius: 10px;">
+    <div class="row ">
+        <div class="col-4" style="background:#7FFFD4;border-radius: 10px;">
+            <p class="my-1"><b>Computer:</b> @Model.Issue.Computer.ComputerName  </p>
+            <p class="my-1"><b>Computer ID:</b> @Model.Issue.ComputerId</p>
+            <p class="my-1"><b>Lab ID:</b> @Model.Issue.Lab.LabId</p>
+            <p class="my-1"><b>Room no:</b> @Model.Issue.Lab.RoomNo</p>
+            <p class="my-1"><b>Building no:</b> @Model.Issue.Lab.BuildingNo</p>
+            
 
-    <form class="m-4" asp-action="IssueUpdate">
-        <input hidden name="IssueId" asp-for="@Model.Issue.IssueId" />
-        <label for="State">Issue Status</label>
-        <select name="State" class="form-select w-25" asp-items="@Model.Items">
-        </select>
-        <label for="Priority">Issue Priority</label>
-        <select name="Priority" class="form-select w-25" asp-items="@Model.PItems">
-        </select>
-        <button class="btn btn-success my-3" type="submit">Submit</button>
-    </form>
+           
+        </div>
+        <div class="col">
+            <h3>@Model.Issue.Title</h3>
+            <p><b>Description:</b> @Model.Issue.Description</p>
+
+            <form class="" asp-action="IssueUpdate">
+                <input hidden name="IssueId" asp-for="@Model.Issue.IssueId" />
+                <label for="State">Issue Status</label>
+                <select name="State" class="form-select w-50" asp-items="@Model.Items">
+                </select>
+                <label for="Priority">Issue Priority</label>
+                <select name="Priority" class="form-select w-50" asp-items="@Model.PItems">
+                </select>
+                <button class="btn btn-success my-3" type="submit">Submit</button>
+            </form>
+        </div>
+
+         
+    </div>
+    
 </div>
 
 @section Scripts{
     <script>
-        $(document).ready(function(){
-            $('[value=@Model.Issue.Priority]').attr("selected","selected");
+        $(document).ready(function () {
+            $('[value=@Model.Issue.Priority]').attr("selected", "selected");
             $('[value=@Model.Issue.State]').attr("selected", "selected");
         })
     </script>

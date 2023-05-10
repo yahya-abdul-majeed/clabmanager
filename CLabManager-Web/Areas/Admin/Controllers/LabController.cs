@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using ModelsLibrary.Models;
 using ModelsLibrary.Models.DTO;
 using ModelsLibrary.Models.ViewModels;
@@ -7,6 +8,7 @@ using ModelsLibrary.Utilities;
 using Newtonsoft.Json;
 using NToastNotify;
 using System.Net;
+using System.Reflection.Emit;
 using System.Text;
 
 namespace CLabManager_Web.Areas.Admin.Controllers
@@ -48,7 +50,7 @@ namespace CLabManager_Web.Areas.Admin.Controllers
                     }
                 }
             }
-            
+
             url = "https://localhost:7138/api/Computers/unassigned";
             using (var response = await httpClient.GetAsync(url))
             {
@@ -64,11 +66,11 @@ namespace CLabManager_Web.Areas.Admin.Controllers
                 var labs = JsonConvert.DeserializeObject<List<Lab>>(apiResponse);
                 labs = labs.OrderBy(p => p.BuildingNo).ThenBy(p => p.RoomNo).ToList();
                 vm.Labs = new List<SelectListItem>();
-                foreach(var i in labs)
+                foreach (var i in labs)
                 {
                     vm.Labs.Add(new SelectListItem
                     {
-                        Text = "Building "+ i.BuildingNo.ToString() + " Room " + i.RoomNo.ToString(),
+                        Text = "Building " + i.BuildingNo.ToString() + " Room " + i.RoomNo.ToString(),
                         Value = i.LabId.ToString()
                     });
                 }
@@ -97,10 +99,10 @@ namespace CLabManager_Web.Areas.Admin.Controllers
             Lab lab = new Lab();
             var obj = new
             {
-                roomNo= dto.RoomNo,
-                buildingNo= dto.BuildingNo,
-                gridType= dto.GridType,
-                status= dto.Status
+                roomNo = dto.RoomNo,
+                buildingNo = dto.BuildingNo,
+                gridType = dto.GridType,
+                status = dto.Status
             };
             StringContent content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
             using (var httpClient = new HttpClient())
@@ -108,7 +110,7 @@ namespace CLabManager_Web.Areas.Admin.Controllers
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Request.Cookies[SD.XAccessToken]);
                 using (var response = await httpClient.PostAsync(url, content))
                 {
-                   if(response.StatusCode == HttpStatusCode.Created)
+                    if (response.StatusCode == HttpStatusCode.Created)
                     {
                         var apiResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                         lab = JsonConvert.DeserializeObject<Lab>(apiResponse);
@@ -121,30 +123,50 @@ namespace CLabManager_Web.Areas.Admin.Controllers
                     }
                 }
             }
-            return RedirectToAction("Create", new {LabId = lab.LabId});
+            return RedirectToAction("Create", new { LabId = lab.LabId });
         }
 
-        //public ActionResult CreateComputer(string computerName, string computerDesc)
-        //{
-        //    var obj = new
-        //    {
-        //        computerName = computerName,
-        //        description = computerDesc
-        //    };
-        //    var url = "https://localhost:7138/api/Computers";
+        public async Task<IActionResult> DeleteLab(int? LabId)
+        {
+            if (LabId == 0 || LabId ==null)
+            {
+                return RedirectToAction(nameof(Create), new { LabId = (int?)null });
+            }
+            using(var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Request.Cookies[SD.XAccessToken]);
 
-        //    using (var httpClient = new HttpClient())
-        //    {
-        //        StringContent stringContent = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
-        //        using(var response = httpClient.PostAsync(url, stringContent).GetAwaiter().GetResult())
-        //        {
-        //            if (response.StatusCode == System.Net.HttpStatusCode.Created)
-        //            { 
+                using (var response = await httpClient.DeleteAsync($"https://localhost:7138/api/Labs/{LabId}"))
+                {
+                    if(response.IsSuccessStatusCode)
+                    {
+                        _toastNotification.AddSuccessToastMessage("Lab deleted");
+                        return RedirectToAction(nameof(Create), new {LabId = (int?)null});
+                    }
+                    else
+                    {
+                        _toastNotification.AddErrorToastMessage("Lab delete failed");
+                        
+                        return Redirect(Request.Headers["Referer"].ToString());
+                    }
+                }
+            }
+        }
 
-        //            }
-        //        }
-        //    }
-        //    return RedirectToAction("Create");
-        //}
+        public async Task<IActionResult> DeleteComputer(int compId)
+        {
+            using(var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Request.Cookies[SD.XAccessToken]);
+                using(var response = await httpClient.DeleteAsync($"https://localhost:7138/api/computers/{compId}"))
+                {
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        _toastNotification.AddErrorToastMessage("Delete failed");
+                    }
+                    return Redirect(Request.Headers["Referer"].ToString());
+                }
+            }
+        }
     }
 }

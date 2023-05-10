@@ -61,6 +61,8 @@ namespace CLabManager_API.Controllers
             if (_db.Issues == null)
                 return NotFound();
             var issue = _mapper.Map<Issue>(issueDTO);
+            if(issue.Title == string.Empty || issue.Description == string.Empty)
+                return UnprocessableEntity();
             _db.Issues.Add(issue);
             await _db.SaveChangesAsync();
             return CreatedAtAction(nameof(GetIssue), new { id = issue.IssueId }, _mapper.Map<IssueDTO>(issue));

@@ -80,6 +80,8 @@ namespace CLabManager_API.Controllers
             if (_db.Computers == null)
                 return NotFound();
             var computer = _mapper.Map<Computer>(ComputerDTO);
+            if (computer.ComputerName == string.Empty)
+                return UnprocessableEntity();
             _db.Computers.Add(computer);
             await _db.SaveChangesAsync();
 

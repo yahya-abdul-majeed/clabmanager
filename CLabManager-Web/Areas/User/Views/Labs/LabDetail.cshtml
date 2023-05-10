@@ -1,6 +1,4 @@
 ﻿@model ModelsLibrary.Models.ViewModels.LabDetailVM
-@using NToastNotify
-@inject IToastNotification _toastNotification
 @{
     var labModel = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Lab);
 
@@ -40,8 +38,10 @@
     </div>
 </div>
 <!--Model end-->
-
-<div id="gridContainer" class="container">
+<h2 class="">Building @Model.Lab.BuildingNo </h2>
+<h2 class="">Room @Model.Lab.RoomNo </h2>
+<div id="gridContainer" class="container d-grid justify-content-center">
+    
 </div>
 
 @section Scripts{
@@ -169,10 +169,15 @@
             function createStudentsRow() {
 
                 var studentsRow = document.createElement('div')
+                var emptyDiv = document.createElement('div')
+                emptyDiv.classList.add("col-2")
+                emptyDiv.style.height = '100px'
+                emptyDiv.style.width = '100px'
                 studentsRow.classList.add("row")
                 studentsRow.classList.add("d-flex")
-                studentsRow.classList.add("justify-content-between")
+                studentsRow.classList.add("justify-content-center")
                 studentsRow.appendChild(createSingleAllotment())
+                studentsRow.appendChild(emptyDiv)
                 studentsRow.appendChild(createSingleAllotment())
                 container.appendChild(studentsRow)
             }

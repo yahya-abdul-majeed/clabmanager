@@ -87,6 +87,7 @@
                         </div>
                         <div class="col">
                             <p><b>@comp.ComputerName</b></p>
+                            <a asp-action="DeleteComputer" asp-route-compId="@comp.ComputerId" class="btn btn-danger">Delete</a>
                         </div>
                     </div>
                 }
@@ -94,8 +95,9 @@
         </div>
         <div class="col-8 bg-info">
             @*<button onclick="allotmentHandler()" class="btn btn-success mt-2">Create allotment space</button>*@
-            <div id="gridContainer" class="container">
+            <a asp-action="DeleteLab" asp-route-LabId="@Model.Lab?.LabId" class="btn btn-danger position-relative" style="top:10px;float:right">Delete lab</a>
 
+            <div id="gridContainer" class="container d-grid justify-content-center ">
             </div>
         </div>
     </div>

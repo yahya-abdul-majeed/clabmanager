@@ -85,6 +85,8 @@ namespace CLabManager_API.Controllers
                 return Problem("Labs table does not exist in the database");
             }
             var lab = _mapper.Map<Lab>(LabDTO);
+            if (lab.RoomNo == 0 || lab.BuildingNo == 0)
+                return UnprocessableEntity();
             _db.Labs.Add(lab); // no await here as savechanges must wait for lab creation to return? 
             await _db.SaveChangesAsync();
             return CreatedAtAction("GetLab", new {id = lab.LabId}, lab); 

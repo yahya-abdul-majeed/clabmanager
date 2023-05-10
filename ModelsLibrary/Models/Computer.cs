@@ -9,7 +9,7 @@ namespace ModelsLibrary.Models
         public string ComputerName { get;set;}
         public string Description { get;set; }
         public bool IsPositioned { get;set; }
-        public GridType GridType { get; set; } = GridType.None;
+        public GridType GridType { get; set; }
         public int? PositionOnGrid { get; set; } = null;
         [ForeignKey("Lab")]
         public int? LabId { get;set; }
