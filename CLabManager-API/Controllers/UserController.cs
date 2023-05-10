@@ -1,12 +1,16 @@
 ﻿using CLabManager_API.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using ModelsLibrary.Models.DTO;
+using System.Threading.Tasks.Dataflow;
 
 namespace CLabManager_API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Roles ="Admin")]
     public class UserController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -18,10 +22,53 @@ namespace CLabManager_API.Controllers
             _db = db;
         }
         [HttpGet]
-        public async  Task<IList<IdentityUser>> GetUsers()
+        public async Task<IEnumerable<UserWithRoleDTO>> GetUsersWithRoles()
         {
-            return await _userManager.Users.ToListAsync();
-            //return await _db.Users.Include(u=>u.Roles)
+            var users = await _db.Users.ToListAsync();
+            List<UserWithRoleDTO> usersWithRoles = new();
+            if (users != null)
+            {
+                foreach (var user in users)
+                {
+                    usersWithRoles.Add(new UserWithRoleDTO
+                    {
+                        UserName = user.UserName!,
+                        Email = user.Email!,
+                        Id = user.Id,
+                        Role = (await _userManager.GetRolesAsync(user))[0]
+
+                    });
+                }
+            }
+
+            return usersWithRoles;
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<UserWithRoleDTO>> UpdateUserRole(RoleUpdateDTO data)
+        {
+            List<string> roles = new List<string>()
+            {
+                "Admin",
+                "User"
+            };
+            var user = await _userManager.FindByIdAsync(data.UserId);
+            if (user != null)
+            {
+                await _userManager.RemoveFromRolesAsync(user, roles);
+                var result = await _userManager.AddToRoleAsync(user, data.Role);
+                if (result.Succeeded)
+                {
+                    return new UserWithRoleDTO
+                    {
+                        UserName = user.UserName,
+                        Email = user.Email,
+                        Id = user.Id,
+                        Role = data.Role
+                    };
+                }
+            }
+            return NotFound();
         }
     }
 }
