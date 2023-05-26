@@ -1,3 +1,4 @@
+using CLabManager_API.Configuration;
 using CLabManager_API.Data;
 using CLabManager_API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,7 +15,9 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddTransient<IMailService,MailService>();
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));   
 builder.Services.AddControllers().AddNewtonsoftJson(x =>
 {
     x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
